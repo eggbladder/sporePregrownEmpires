@@ -1,3 +1,3 @@
 <mod displayName="Pregrown Empires" unique="eggbladdersPregrownEmpires" description="Makes empires spawn in with many planets. No more raising ally empires yourself!" installerSystemVersion="1.0.1.2" hasCustomInstaller="false" dllsBuild="2.5.319">
-    <prerequisite game="GalacticAdventures">sporePregrownEmpires.dll</prerequisite>
+    <prerequisite>sporePregrownEmpires.dll</prerequisite>
 </mod>

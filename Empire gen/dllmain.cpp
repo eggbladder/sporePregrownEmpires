@@ -93,7 +93,7 @@ member_detour(GetEmpireForStar__detour, Simulator::cStarManager, cEmpire* (cStar
 	cEmpire* detoured(cStarRecord * starRecord) {
 		auto empire = original_function(this, starRecord);
 		if (starRecord->mEmpireID) {
-			if (empire->mEmpireName == u"unknown" && empire->mEmpireMoney != 100001) {
+			if (empire->mEmpireName == u"unknown" && empire->mEmpireMoney != 100001 && starRecord->mName != u"Sol" && empire->mCurrentGameMode == 5) {
 				expand(empire);
 			}
 		}
@@ -111,7 +111,6 @@ member_detour(CreateSpaceCommEvent__detour, Simulator::cCommManager, cCommEvent*
 		
 		if ((dialogID == 2939165228 || dialogID == 3729496045) && empire->mEmpireMoney != 100001 ) {
 			expand(empire);
-		
 		}
 		return commevent;
 	}

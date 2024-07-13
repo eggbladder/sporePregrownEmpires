@@ -2,6 +2,24 @@
 #include "stdafx.h"
 using namespace ArgScript;
 using namespace Simulator;
+eastl::vector<cStarRecordPtr> stars;
+class listener
+	: public App::DefaultMessageListener
+{
+public:
+	bool HandleMessage(uint32_t messageID, void* message) override;
+
+};
+
+bool listener::HandleMessage(uint32_t messageID, void* message) {
+	if (messageID == id("BlacklistStarFromGeneration")) {
+		auto data = (cStarRecord*)message;
+		stars.push_back(data);
+
+
+	}
+	return false;
+}
 void Initialize()
 {
 	// This method is executed when the game starts, before the user interface is shown
@@ -11,11 +29,22 @@ void Initialize()
 	//  - Add new game modes
 	//  - Add new space tools
 	//  - Change materials
-	
+	MessageManager.AddListener(new listener(), id("BlacklistStarFromGeneration"));
 	
 }
 //member_detour(CreateSpaceCommEvent_detour, Simulator::cComm auto (uint32_t, PlanetID, uint32_t, uint32_t, void*, int, unisgned int)) {
-	
+bool ismarked(cStarRecord* starRecord) {
+	int i = 0;
+	for (auto star : stars) {
+		if (starRecord == star) {
+			stars.erase(stars.begin() + i);
+			return true;
+		}
+		i += 1;
+		
+	}
+	return false;
+}
 void expand(cEmpire* empire) {
 	auto cStarManager = cStarManager::Get();
 	empire->mEmpireMoney = 100001;
@@ -88,14 +117,18 @@ void expand(cEmpire* empire) {
 		}
 	}
 }
-//};
+
 member_detour(GetEmpireForStar__detour, Simulator::cStarManager, cEmpire* (cStarRecord*)) {
 	cEmpire* detoured(cStarRecord * starRecord) {
 		auto empire = original_function(this, starRecord);
+		bool marked = ismarked(starRecord);
 		if (starRecord->mEmpireID) {
-			if (empire->mEmpireName == u"unknown" && empire->mEmpireMoney != 100001 && starRecord->mName != u"Sol" && empire->mCurrentGameMode == 5) {
+			if (empire->mEmpireName == u"unknown" && empire->mEmpireMoney != 100001 && starRecord->mName != u"Sol" && empire->mCurrentGameMode == 5 && !marked) {
 				expand(empire);
 			}
+		}
+		if (marked) {
+			empire->mEmpireMoney = 100001;
 		}
 		return empire;
 	}

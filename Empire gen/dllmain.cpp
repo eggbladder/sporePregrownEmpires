@@ -127,7 +127,7 @@ member_detour(GetEmpireForStar__detour, Simulator::cStarManager, cEmpire* (cStar
 				expand(empire);
 			}
 		}
-		if (marked) {
+		if (marked || empire->mCurrentGameMode != 5) {
 			empire->mEmpireMoney = 100001;
 		}
 		return empire;
